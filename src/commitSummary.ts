@@ -24,6 +24,7 @@ Comments should be in a bullet point list, each line starting with a \`*\`.
 The summary should not include comments copied from the code.
 The output should be easily readable. When in doubt, write less comments and not more.
 Readability is top priority. Write only the most important comments about the diff.
+If the code has any errors, request a review.
 
 EXAMPLE SUMMARY COMMENTS:
 \`\`\`
@@ -32,6 +33,7 @@ EXAMPLE SUMMARY COMMENTS:
 * Moved the \`octokit\` initialization to a separate file [src/octokit.ts], [src/index.ts]
 * Added an OpenAI API for completions [packages/utils/apis/openai.ts]
 * Lowered numeric tolerance for test files
+* This code has errors, review the same in line X and method Y
 \`\`\`
 Most commits will have less comments than this examples list.
 The last comment does not include the file names,
@@ -84,7 +86,7 @@ async function getOpenAICompletion(
       .map((file: any) => formatGitDiff(file.filename, file.patch))
       .join("\n");
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    const openAIPrompt = `${OPEN_AI_PRIMING}\n\nTHE GIT DIFF TO BE SUMMARIZED:\n\`\`\`\n${rawGitDiff}\n\`\`\`\n\nTHE SUMMERY:\n`;
+    const openAIPrompt = `${OPEN_AI_PRIMING}\n\nTHE GIT DIFF TO BE SUMMARIZED:\n\`\`\`\n${rawGitDiff}\n\`\`\`\n\nTHE SUMMERY:\n\nERROR:\n`;
 
     console.log(
       `OpenAI prompt for commit ${diffMetadata.commit.data.sha}: ${openAIPrompt}`
