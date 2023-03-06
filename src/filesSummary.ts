@@ -28,6 +28,8 @@ Please summarize it in a comment, describing the changes made in the diff in hig
 Do it in the following way:
 Write \`SUMMARY:\` and then write a summary of the changes made in the diff, as a bullet point list.
 Every bullet point should start with a \`*\`.
+Show me an error and suggestion to improve the code.
+Translate to brazilian portuguese.
 `;
 
 const MAX_FILES_TO_SUMMARIZE = 20;
@@ -155,7 +157,7 @@ export async function getFilesSummaries(
       continue;
     }
     let isFileAlreadySummarized = false;
-    const expectedComment = `GPT summary of ${modifiedFiles[modifiedFile].originSha} - ${modifiedFiles[modifiedFile].sha}:`;
+    const expectedComment = `GPT summary of file SHA ${modifiedFiles[modifiedFile].originSha} - ${modifiedFiles[modifiedFile].sha}:`;
     for (const reviewSummary of existingReviewSummaries) {
       if (reviewSummary[0].includes(expectedComment)) {
         const summary = reviewSummary[0].split("\n").slice(1).join("\n");
