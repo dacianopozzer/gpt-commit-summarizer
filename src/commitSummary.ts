@@ -11,36 +11,35 @@ import { SHARED_PROMPT } from "./sharedPrompt";
 import { summarizePr } from "./summarizePr";
 
 const OPEN_AI_PRIMING = `${SHARED_PROMPT}
-After the git diff of the first file, there will be an empty line, and then the git diff of the next file. 
+Após o git diff do primeiro arquivo, haverá uma linha vazia e, em seguida, o git diff do próximo arquivo.
 
-For comments that refer to 1 or 2 modified files,
-add the file names as [path/to/modified/python/file.py], [path/to/another/file.json]
-at the end of the comment.
-If there are more than two, do not include the file names in this way.
-Do not include the file name as another part of the comment, only in the end in the specified format.
-Do not use the characters \`[\` or \`]\` in the summary for other purposes.
-Write every summary comment in a new line.
-Comments should be in a bullet point list, each line starting with a \`*\`.
-The summary should not include comments copied from the code.
-The output should be easily readable. When in doubt, write less comments and not more.
-Readability is top priority. Write only the most important comments about the diff.
-If the code has any errors, request a review.
+Para comentários que se referem a 1 ou 2 arquivos modificados,
+adicione os nomes dos arquivos como [path/to/modified/python/file.py], [path/to/another/file.json]
+no final do comentário.
+Se houver mais de dois, não inclua os nomes dos arquivos dessa maneira.
+Não inclua o nome do arquivo como outra parte do comentário, apenas no final no formato especificado.
+Não use os caracteres \`[\` ou \`]\` no resumo para outros fins.
+Escreva cada comentário resumido em uma nova linha.
+Os comentários devem estar em uma lista de marcadores, cada linha começando com \`*\`.
+O resumo não deve incluir comentários copiados do código.
+A saída deve ser facilmente legível. Em caso de dúvida, escreva menos comentários e não mais.
+A legibilidade é a principal prioridade. Escreva apenas os comentários mais importantes sobre o diff.
+Se o código tiver algum erro, solicite uma revisão.
 
-EXAMPLE SUMMARY COMMENTS:
+EXEMPLO DE COMENTÁRIOS DE RESUMO:
 \`\`\`
-* Raised the amount of returned recordings from \`10\` to \`100\` [packages/server/recordings_api.ts], [packages/server/constants.ts]
-* Fixed a typo in the github action name [.github/workflows/gpt-commit-summarizer.yml]
-* Moved the \`octokit\` initialization to a separate file [src/octokit.ts], [src/index.ts]
-* Added an OpenAI API for completions [packages/utils/apis/openai.ts]
-* Lowered numeric tolerance for test files
-* This code has errors, review the same in line X and method Y
+* Aumentou a quantidade de gravações retornadas de \`10\` para \`100\` [packages/server/recordings_api.ts], [packages/server/constants.ts]
+* Corrigido um erro de digitação no nome da ação do github [.github/workflows/gpt-commit-summarizer.yml]
+* Movida a inicialização do \`octokit\` para um arquivo separado [src/octokit.ts], [src/index.ts]
+* Adicionado uma API OpenAI para conclusões [packages/utils/apis/openai.ts]
+* Tolerância numérica reduzida para arquivos de teste
+* Este código possui erros, reveja os mesmos na linha X e método Y
 \`\`\`
-Most commits will have less comments than this examples list.
-The last comment does not include the file names,
-because there were more than two relevant files in the hypothetical commit.
-Do not include parts of the example in your summary.
-It is given only as an example of appropriate comments.
-Translate to brazilian portuguese.
+A maioria dos commits terá menos comentários do que esta lista de exemplos.
+O último comentário não inclui os nomes dos arquivos,
+porque havia mais de dois arquivos relevantes no commit hipotético.
+Não inclua partes do exemplo em seu resumo.
+É dado apenas como um exemplo de comentários apropriados.
 `;
 
 const MAX_COMMITS_TO_SUMMARIZE = 20;
@@ -87,7 +86,7 @@ async function getOpenAICompletion(
       .map((file: any) => formatGitDiff(file.filename, file.patch))
       .join("\n");
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    const openAIPrompt = `${OPEN_AI_PRIMING}\n\nTHE GIT DIFF TO BE SUMMARIZED:\n\`\`\`\n${rawGitDiff}\n\`\`\`\n\nTHE SUMMERY:\n\nERROR:\n`;
+    const openAIPrompt = `${OPEN_AI_PRIMING}\n\nA DIFF DO GIT A SER RESUMIDA:\n\`\`\`\n${rawGitDiff}\n\`\`\`\n\nO RESUMO:\n\nERROR:\n`;
 
     console.log(
       `OpenAI prompt for commit ${diffMetadata.commit.data.sha}: ${openAIPrompt}`
@@ -153,7 +152,7 @@ export async function summarizeCommits(
   let needsToSummarizeHead = false;
   for (const commit of commits) {
     // Check if a comment for this commit already exists
-    const expectedComment = `GPT summary of ${commit.sha}:`;
+    const expectedComment = `GPT resumo do sha ${commit.sha}:`;
     const regex = new RegExp(`^${expectedComment}.*`);
     const existingComment = comments.find((comment) =>
       regex.test(comment.body ?? "")
@@ -162,7 +161,7 @@ export async function summarizeCommits(
     // If a comment already exists, skip this commit
     if (existingComment !== undefined) {
       const currentCommitAbovePrSummary =
-        existingComment.body?.split("PR summary so far:")[0] ?? "";
+        existingComment.body?.split("PR resumo para:")[0] ?? "";
       const summaryLines = currentCommitAbovePrSummary
         .split("\n")
         .slice(1)
@@ -211,7 +210,7 @@ export async function summarizeCommits(
     commitSummaries.push([commit.sha, completion]);
 
     // Create a comment on the pull request with the names of the files that were modified in the commit
-    const comment = `GPT summary of ${commit.sha}:\n\n${completion}`;
+    const comment = `GPT resumo de ${commit.sha}:\n\n${completion}`;
 
     if (commit.sha !== headCommit) {
       await octokit.issues.createComment({
@@ -240,7 +239,7 @@ export async function summarizeCommits(
     } catch (error) {
       console.error(error);
     }
-    const comment = `GPT summary of ${headCommit}:\n\n${headCommitShaAndSummary[1]}\n\nPR summary so far:\n\n${prSummary}`;
+    const comment = `GPT resumo de ${headCommit}:\n\n${headCommitShaAndSummary[1]}\n\nPR resumo:\n\n${prSummary}`;
     await octokit.issues.createComment({
       owner: repository.owner.login,
       repo: repository.name,

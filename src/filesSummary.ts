@@ -23,13 +23,12 @@ export function preprocessCommitMessage(commitMessage: string): string {
 }
 
 const OPEN_AI_PROMPT = `${SHARED_PROMPT}
-The following is a git diff of a single file.
-Please summarize it in a comment, describing the changes made in the diff in high level.
-Do it in the following way:
-Write \`SUMMARY:\` and then write a summary of the changes made in the diff, as a bullet point list.
-Every bullet point should start with a \`*\`.
-Show me an error and suggestion to improve the code.
-Translate to brazilian portuguese.
+O seguinte é um git diff de um único arquivo.
+Por favor, resuma em um comentário, descrevendo as mudanças feitas no diff em alto nível.
+Faça da seguinte forma:
+Escreva \`SUMMARY:\` e, em seguida, escreva um resumo das alterações feitas no diff, como uma lista de marcadores.
+Cada marcador deve começar com um \`*\`.
+Mostre-me um erro e sugestão para melhorar o código.
 `;
 
 const MAX_FILES_TO_SUMMARIZE = 20;
@@ -39,7 +38,7 @@ async function getOpenAISummaryForFile(
   patch: string
 ): Promise<string> {
   try {
-    const openAIPrompt = `${OPEN_AI_PROMPT}\n\nTHE GIT DIFF OF ${filename} TO BE SUMMARIZED:\n\`\`\`\n${patch}\n\`\`\`\n\nSUMMARY:\n`;
+    const openAIPrompt = `${OPEN_AI_PROMPT}\n\nA DIFERENÇA DO ${filename} PARA O RESUMO:\n\`\`\`\n${patch}\n\`\`\`\n\nRESUMO:\n`;
     console.log(`OpenAI file summary prompt for ${filename}:\n${openAIPrompt}`);
 
     if (openAIPrompt.length > MAX_OPEN_AI_QUERY_LENGTH) {

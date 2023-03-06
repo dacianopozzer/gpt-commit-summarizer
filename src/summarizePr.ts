@@ -6,13 +6,12 @@ import {
   TEMPERATURE,
 } from "./openAi";
 
-const OPEN_AI_PROMPT = `You are an expert programmer, and you are trying to summarize a pull request.
-You went over every commit that is part of the pull request and over every file that was changed in it.
-For some of these, there was an error in the commit summary, or in the files diff summary.
-Please summarize the pull request. Write your response in bullet points, starting each bullet point with a \`*\`.
-Write a high level description. Do not repeat the commit summaries or the file summaries.
-Write the most important bullet points. The list should not be more than a few bullet points.
-Translate to brazilian portuguese.
+const OPEN_AI_PROMPT = `Você é um programador especialista e está tentando resumir uma solicitação pull.
+Você examinou todos os commits que fazem parte da solicitação pull e todos os arquivos que foram alterados nele.
+Para alguns deles, houve um erro no resumo do commit ou no resumo do diff dos arquivos.
+Resuma a solicitação pull. Escreva sua resposta em marcadores, iniciando cada marcador com um \`*\`.
+Escreva uma descrição de alto nível. Não repita os resumos de confirmação ou os resumos de arquivo.
+Escreva os pontos mais importantes. A lista não deve ter mais do que alguns marcadores.
 `;
 
 const linkRegex = /\[.*?\]\(https:\/\/github\.com\/.*?[a-zA-Z0-f]{40}\/(.*?)\)/;
@@ -39,9 +38,9 @@ export async function summarizePr(
   const filesString = Object.entries(fileSummaries)
     .map(([filename, summary]) => `File ${filename}:\n${summary}`)
     .join("\n");
-  const openAIPrompt = `${OPEN_AI_PROMPT}\n\nTHE COMMIT SUMMARIES:\n\`\`\`\n${commitsString}\n\`\`\`\n\nTHE FILE SUMMARIES:\n\`\`\`\n${filesString}\n\`\`\`\n\n
-  Reminder - write only the most important points. No more than a few bullet points.
-  THE PULL REQUEST SUMMARY:\n`;
+  const openAIPrompt = `${OPEN_AI_PROMPT}\n\nRESUMO DO COMMIT:\n\`\`\`\n${commitsString}\n\`\`\`\n\nRESUMO DO ARQUIVO:\n\`\`\`\n${filesString}\n\`\`\`\n\n
+  Lembrete - escreva apenas os pontos mais importantes. Não mais do que alguns marcadores.
+  O RESUMO DO PEDIDO DE PULL:\n`;
   console.log(`OpenAI for PR summary prompt:\n${openAIPrompt}`);
 
   if (openAIPrompt.length > MAX_OPEN_AI_QUERY_LENGTH) {
