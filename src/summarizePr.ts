@@ -6,12 +6,11 @@ import {
   TEMPERATURE,
 } from "./openAi";
 
-const OPEN_AI_PROMPT = `Você é um programador especialista e está tentando resumir uma solicitação pull.
+const OPEN_AI_PROMPT = `Você é um analista de qualidade e está tentando resumir uma solicitação pull request.
 Você examinou todos os commits que fazem parte da solicitação pull e todos os arquivos que foram alterados nele.
-Para alguns deles, houve um erro no resumo do commit ou no resumo do diff dos arquivos.
 Resuma a solicitação pull. Escreva sua resposta em marcadores, iniciando cada marcador com um \`*\`.
-Escreva uma descrição de alto nível. Não repita os resumos de confirmação ou os resumos de arquivo.
-Escreva os pontos mais importantes. A lista não deve ter mais do que alguns marcadores.
+Escreva uma descrição de alto nível em itens para gerar um caso de teste.
+Gerar casos de testes em BDD para cucumber.
 `;
 
 const linkRegex = /\[.*?\]\(https:\/\/github\.com\/.*?[a-zA-Z0-f]{40}\/(.*?)\)/;
